@@ -8,27 +8,28 @@ class Track:
 
 class Album:
 
-    def __init__(self, trackObjList):
+    def __init__(self, trackObj):
         self.album_dict = {}
 
-        for obj in trackObjList:
-            self.album_dict[obj.title] = obj
+        self.album_dict[trackObj.title] = trackObj
 
 
 class Artist:
 
-    def __init__(self, uniqueAlbums, albumObj):
+    def __init__(self, album, albumObj):
         self.artist_dict = {}
 
-        self.artist_dict[albumName] = albumObj
+        self.artist_dict[album] = albumObj
 
 def main():
-    trackObjList = []
-    albumList = []
+    numberOfTracks = []
+    numberOfAlbums = []
 
-    artist_dict = {}
+    uniqueTracks = {}
+    uniqueAlbums = {}
+    uniqueArtist  = {}
 
-    with open('music.csv', mode='r') as myFile:
+    with open('music.csv', mode='r', encoding='utf-8') as myFile:
         line = myFile.readlines()
 
         for i in line:
@@ -42,19 +43,26 @@ def main():
             genre    = musicList[4]
 
             trackObj  = Track(title, duration, genre)
-            trackObjList.append(trackObj)
-            albumList.append(album)
+            albumObj  = Album(trackObj)
+            artistObj = Artist(album, albumObj)
 
-        albumObj = Album(trackObjList)
+            uniqueArtist[artist] = artistObj
 
-        unique_albums = dict(zip(albumList, albumObj.album_dict)).keys()
-        artistObj = Artist(unique_albums, albumObj)
+            #Count
+            numberOfTracks.append(albumObj.album_dict)
+            numberOfAlbums.append(artistObj.artist_dict)
 
-        # artist_dict[artist] = artistObj
-        #
-        # print("Artists: {0}".format(len(artist_dict)))
-        # print("Albums: {0}".format(len(albumDict)))
-        # print("Tracks: {0}".format(len(trackDict)))
+
+    #Remove Duplicates
+    for i in numberOfTracks:
+        uniqueTracks[list(i.keys())[0]] = list(i.values())[0]
+
+    for j in numberOfAlbums:
+        uniqueAlbums[list(j.keys())[0]] = list(j.values())[0]
+
+    print("Tracks: {0}".format(len(uniqueTracks)))
+    print("Albums: {0}".format(len(uniqueAlbums)))
+    print("Artist: {0}".format(len(uniqueArtist)))
 
 
 
